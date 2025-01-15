@@ -18,6 +18,14 @@ For server-side management, Redux Toolkit was implemented. This is one of the be
 
 Styled-components were used for styling the components. I selected it due to its flexibility and scalability, which makes it easy to adapt the project to future changes and developments.
 
+## Demonstration
+
+Here is a link to a video demonstrating the registration process: [Video Demonstration](https://www.loom.com/share/72e56488d03740cd91516a3ad16b59f8).
+
+## Upcoming Features
+
+On **January 15, 2025**, I will be adding the ability to register via cryptocurrency wallets. Stay tuned for this exciting update!
+
 ## Technologies Used
 
 - **MongoDB**: Database for storing persistent data.
