@@ -1,0 +1,50 @@
+# Logs
+logs
+*.log
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Built output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+*.sublime-project
+*.sublime-workspace
+*.idea/
+*.vscode/
+
+# Compiled binary addons
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+
+# Jest
+.coverage/
+
+# Other 
+src/Services/testService.mjs
+duplicate_mongo.sh
