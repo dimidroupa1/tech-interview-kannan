@@ -21,6 +21,7 @@ Styled-components were used for styling the components. I selected it due to its
 ## Demonstration
 
 Here is a link to a video demonstrating the registration process: [Video Demonstration](https://www.loom.com/share/72e56488d03740cd91516a3ad16b59f8).
+Crypto auth demonstration [Video Demonstration](https://www.loom.com/share/09efd6ba147347e08949d2f9433788e9).
 
 ## Upcoming Features
 
