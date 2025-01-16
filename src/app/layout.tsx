@@ -1,12 +1,10 @@
-"use client"
-
 import type { Metadata } from "next";
 import { Montserrat, Roboto_Slab } from "next/font/google";
 import "./globals.css";
+
 import CustomProvider from "@/lib/providers/CustomProvider";
+import { headers } from "next/headers";
 import { SessionProvider } from "next-auth/react";
-import { ReduxProvider } from "@/lib/providers/ReduxProvider";
-import StyledComponentsRegistry from "@/lib/registry";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -18,19 +16,18 @@ const robotoSlab = Roboto_Slab({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersObj = await headers();
+  const cookies = headersObj.get("cookie") || "";
+
   return (
     <html lang="en">
       <body className={`${montserrat.variable} ${robotoSlab.variable}`}>
-        <ReduxProvider>
-          <SessionProvider>
-            <CustomProvider>{children}</CustomProvider>
-          </SessionProvider>
-        </ReduxProvider>
+        <CustomProvider cookies={cookies}>{children}</CustomProvider>
       </body>
     </html>
   );

@@ -23,7 +23,7 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          localStorage.setItem("activation_token", result.data.activationToken)
+          localStorage.setItem("activation_token", result.data.activationToken);
           dispatch(
             userRegistration({
               token: result.data.activationToken,
@@ -86,7 +86,34 @@ export const authApi = apiSlice.injectEndpoints({
         body: {
           email,
           name,
-          provider: "google"
+          provider: "google",
+        },
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userLoggedIn({
+              accessToken: result.data.activationToken,
+              user: result.data.user,
+            })
+          );
+        } catch (error: any) {
+          console.log(error);
+        }
+      },
+    }),
+    cryptoAuth: builder.mutation({
+      query: ({ walletAddress }) => ({
+        url: "crypto-auth",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: {
+          walletAddress,
+          provider: "crypto",
         },
         credentials: "include" as const,
       }),
@@ -129,5 +156,6 @@ export const {
   useActivationMutation,
   useLoginMutation,
   useSocialAuthMutation,
+  useCryptoAuthMutation,
   useLogOutQuery,
 } = authApi;

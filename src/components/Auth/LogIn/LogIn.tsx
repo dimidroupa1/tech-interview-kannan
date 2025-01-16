@@ -7,11 +7,14 @@ import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 import { z } from "zod";
 import {
+  useCryptoAuthMutation,
   useLoginMutation,
   useSocialAuthMutation,
 } from "@/redux/features/auth/authApi";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -27,21 +30,53 @@ const LogIn = () => {
     password: undefined,
   });
   const { data: dataSocial, status } = useSession();
+  const { address, isConnected, caipAddress, embeddedWalletInfo } =
+    useAppKitAccount();
 
   const [login, { isSuccess, error }] = useLoginMutation();
   const [socialAuth, { isSuccess: isSuccessSocial, error: errorSocial }] =
     useSocialAuthMutation();
+  const [cryptoAuth, { isSuccess: isSuccessCrypto, error: errorCrypto }] =
+    useCryptoAuthMutation();
+
+  const { isReady, isPending, connect } = useAppKitWallet({
+    onSuccess(data) {
+      const fetchDataCrypto = async (walletAddress: string) => {
+        try {
+          const response = await cryptoAuth({
+            walletAddress,
+          });
+
+          if (response) {
+            toast.success("Login successfully!");
+            window.location.href = "/";
+          }
+        } catch (error: any) {
+          console.error("Crypto authentication failed:", error);
+
+          if (error?.data?.message) {
+            toast.error(error.data.message);
+          } else {
+            toast.error("Crypto authentication failed.");
+          }
+        }
+      };
+
+      fetchDataCrypto(data?.address);
+    },
+    onError(error) {
+      // ...
+    },
+  });
 
   useEffect(() => {
     const fetchDataSocial = async () => {
       if (status === "authenticated" && dataSocial) {
         try {
-          console.log(dataSocial);
-
           const response = await socialAuth({
             email: dataSocial?.user?.email,
             name: dataSocial?.user?.name,
-          }).unwrap(); // `unwrap` для проверки ошибок.
+          }).unwrap();
 
           if (response) {
             toast.success("Login successfully!");
@@ -51,7 +86,7 @@ const LogIn = () => {
           console.error("Social authentication failed:", error);
 
           if (error?.data?.message) {
-            toast.error(error.data.message); // Выводим сообщение ошибки.
+            toast.error(error.data.message);
           } else {
             toast.error("Social authentication failed.");
           }
@@ -78,7 +113,7 @@ const LogIn = () => {
 
   const handleContinueWithEmail = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(1)
+    console.log(1);
     try {
       loginSchema.parse({ email, password });
       await login({ email, password });
@@ -92,7 +127,7 @@ const LogIn = () => {
           {}
         );
         setErrors(fieldErrors);
-        console.log(fieldErrors); 
+        console.log(fieldErrors);
       }
     }
   };
@@ -196,7 +231,7 @@ const LogIn = () => {
             </svg>
           </SocialButton>
 
-          <SocialButton>
+          <SocialButton onClick={() => connect("walletConnect")}>
             <Image
               src="https://s3.eu-west-1.amazonaws.com/media.binaryx.com/manually_uploaded_media/sign_in/wallet_connect_icon_square.png"
               alt="WalletConnect"
@@ -205,9 +240,10 @@ const LogIn = () => {
               height={25}
               quality={100}
             />
+            {/* <appkit-button /> */}
           </SocialButton>
 
-          <SocialButton>
+          <SocialButton onClick={() => connect("metamask")}>
             <Image
               src="https://s3.eu-west-1.amazonaws.com/media.binaryx.com/manually_uploaded_media/sign_in/meta_mask_icon_sm.png"
               alt="MetaMask"
