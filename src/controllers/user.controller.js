@@ -246,14 +246,14 @@ export const socialAuth = CatchAsyncError(async (req, res, next) => {
 // crypto auth
 export const cryptoAuth = CatchAsyncError(async (req, res, next) => {
   try {
-    const { walletAddress } = req.body;
+    const { walletAddress, provider } = req.body;
 
     const user = await UserModel.findOne({ walletAddress });
 
     if (user) {
       sendToken(user, 200, res);
     } else {
-      const newUser = await UserModel.create({ walletAddress });
+      const newUser = await UserModel.create({ walletAddress, provider });
       sendToken(newUser, 200, res);
     }
   } catch (error) {

@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
           if (this.provider === "email" || this.provider === "google") {
             return emailRegexPattern.test(value);
           }
-          return true; // No email validation for crypto provider
+          return true;
         },
         message: "Please enter a valid email",
       },
@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
       minlength: [6, "Password must be at least 6 characters"],
       select: false,
       required: function () {
-        return this.provider === "email"; // Only required for email provider
+        return this.provider != "email" && this.provider != "crypto";
       },
     },
     provider: {
@@ -47,11 +47,10 @@ const userSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
       required: function () {
-        return this.provider === "crypto"; // Only required for crypto provider
+        return this.provider === "crypto";
       },
       validate: {
         validator: function (value) {
-          // Implement your wallet address validation logic here
           return true;
         },
         message: "Please enter a valid wallet address",
